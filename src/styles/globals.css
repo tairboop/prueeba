@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  @keyframes blur-in {
+    0% {
+      backdrop-filter: blur(0px);
+    }
+    100% {
+      backdrop-filter: blur(5px);
+    }
+  }
+
+  .animate-blur-in {
+    animation: blur-in 1s ease-in-out forwards;
+  }
+
+  .color-blur {
+    @apply bg-black/10 dark:bg-white/5;
+  }
+
+  .content-blur,
+  .content-blur:hover {
+    @apply color-blur;
+    backdrop-filter: blur(5px);
+  }
+
+  .content-blur-xl {
+    @apply color-blur;
+    backdrop-filter: blur(10px);
+  }
+
+  .popover-blur {
+    @apply animate-blur-in color-blur;
+  }
+
+  .bg-gradient {
+    @apply bg-gradient-to-tr from-content1 via-content1 via-60% to-primary-100;
+  }
+
+  @keyframes fadeOut {
+    to {
+      opacity: 0;
+    }
+  }
+
+  .controls-overlay {
+    opacity: 1;
+    animation: fadeOut 0.5s ease-in forwards;
+    animation-delay: 5s;
+  }
+
+  .group:hover .controls-overlay {
+    opacity: 1 !important;
+    animation: none !important;
+  }
+}

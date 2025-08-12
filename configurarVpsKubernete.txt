@@ -1,0 +1,112 @@
+Perfecto. Ya que tienes acceso como **root**, aquí tienes las instrucciones completas para instalar y configurar Kubernetes (usando **K3s**) en tu VPS **como root**, y dejarlo listo para integrarse con GitHub Actions. Vamos directo al grano 👇
+
+---
+
+## ✅ 1. INSTALAR K3s COMO ROOT (Kubernetes simplificado)
+
+```bash
+curl -sfL https://get.k3s.io | sh -
+```
+
+Esto instalará:
+
+* Un clúster de un solo nodo (servidor).
+* `kubectl`, `k3s`, y todo lo necesario.
+* El archivo `kubeconfig` en: `/etc/rancher/k3s/k3s.yaml`
+
+✅ Espera unos segundos tras la instalación. Puedes verificar que esté corriendo con:
+
+```bash
+k3s kubectl get nodes
+```
+
+---
+
+## ✅ 2. COPIAR kubeconfig PARA USAR FUERA DEL VPS
+
+1. **Copia el archivo de configuración:**
+
+```bash
+mkdir -p ~/.kube
+cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+```
+
+2. **Ajusta el endpoint del servidor (si lo vas a usar desde otro equipo):**
+
+Edita el archivo `~/.kube/config` y cambia esta línea:
+
+```yaml
+server: https://127.0.0.1:6443
+```
+
+🔁 Por tu IP pública (ejemplo):
+
+```yaml
+server: https://TU_IP_PUBLICA:6443
+```
+
+> ⚠️ Esto solo es necesario si vas a conectarte al clúster **desde tu PC**. Si todo ocurre en el VPS (como despliegue desde GitHub hacia el VPS), puedes dejarlo como está.
+
+---
+
+## ✅ 3. GENERAR CONTENIDO BASE64 PARA `KUBE_CONFIG`
+
+```bash
+cat ~/.kube/config | base64 -w 0
+```
+
+📋 Copia **todo el resultado** (¡es una línea muy larga!).
+
+> Si estás en macOS localmente y haces esto desde ahí, usa `base64` sin `-w 0`.
+
+---
+
+## ✅ 4. CREAR EL SECRETO EN GITHUB ACTIONS
+
+1. Ve a tu repositorio en GitHub.
+2. Entra en:
+   `Settings > Secrets and variables > Actions`
+3. Haz clic en **“New repository secret”**
+4. Crea uno con:
+
+| Nombre        | Valor (lo que copiaste) |
+| ------------- | ----------------------- |
+| `KUBE_CONFIG` | `<contenido base64>`    |
+
+---
+
+## ✅ 5. USAR EL SECRETO EN TU WORKFLOW
+
+En tu GitHub Actions (`.github/workflows/deploy.yml` o similar), añade esto:
+
+```yaml
+- name: Set up kubeconfig
+  run: |
+    mkdir -p $HOME/.kube
+    echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
+```
+
+Luego puedes usar:
+
+```yaml
+- name: Verificar conexión al clúster
+  run: kubectl get nodes
+```
+
+---
+
+## ✅ ¿Qué sigue?
+
+Ahora puedes:
+
+* Crear tus archivos YAML de Kubernetes: `deployment.yaml`, `service.yaml`, etc.
+* Hacer que tu workflow los aplique así:
+
+```yaml
+- name: Desplegar backend
+  run: kubectl apply -f k8s/deployment.yaml
+```
+
+---
+
+¿Quieres que te cree esos archivos YAML para desplegar tu backend con una imagen de DockerHub (`streamcast-backend:latest`) y lo conecte a un puerto, con o sin LoadBalancer?

@@ -1,0 +1,146 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "formatter": {
+    "enabled": true,
+    "formatWithErrors": false,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineEnding": "lf",
+    "lineWidth": 140,
+    "attributePosition": "auto",
+    "ignore": [
+      "build/*",
+      "dist/*",
+      "dist-server/*",
+      "public/*",
+      "**/out/*",
+      "**/node_modules/*",
+      "**/package-lock.json",
+      "**/yarn.lock",
+      "**/bun.lock",
+      "**/src/assets/iconify-bundle.json"
+    ]
+  },
+  "organizeImports": {
+    "enabled": true,
+    "ignore": [
+      "build/*",
+      "dist/*",
+      "dist-server/*",
+      "public/*",
+      "**/out/*",
+      "**/node_modules/*",
+      "**/package-lock.json",
+      "**/yarn.lock",
+      "scripts/*"
+    ]
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "suspicious": {
+        "recommended": true,
+        "noDebugger": "off",
+        "noExplicitAny": "off",
+        "noArrayIndexKey": "off",
+        "noEmptyBlockStatements": "off"
+      },
+      "style": {
+        "recommended": true,
+        "noShoutyConstants": "warn",
+        "noDefaultExport": "off",
+        "noNamespaceImport": "off",
+        "useFilenamingConvention": "warn",
+        "noUselessElse": "warn",
+        "noVar": "warn",
+        "noUnusedTemplateLiteral": "off",
+        "useImportType": "warn",
+        "noNonNullAssertion": "off",
+        "useNamingConvention": {
+          "level": "warn",
+          "options": {
+            "strictCase": false,
+            "enumMemberCase": "CONSTANT_CASE"
+          }
+        }
+      },
+      "a11y": {
+        "recommended": true,
+        "noSvgWithoutTitle": "off",
+        "noDistractingElements": "error",
+        "noRedundantAlt": "error",
+        "useAltText": "error",
+        "noAccessKey": "error"
+      },
+      "correctness": {
+        "recommended": true,
+        "useExhaustiveDependencies": "warn",
+        "noUnusedImports": "warn",
+        "noUnusedVariables": "warn",
+        "noChildrenProp": "error",
+        "noEmptyPattern": "error",
+        "noSelfAssign": "error",
+        "noStringCaseMismatch": "error",
+        "noUnreachable": "error",
+        "noUnsafeFinally": "error",
+        "noGlobalObjectCalls": "error",
+        "noConstructorReturn": "error",
+        "noConstAssign": "error",
+        "noConstantCondition": "error",
+        "noUndeclaredVariables": "error",
+        "noUnknownFunction": "off"
+      },
+      "complexity": {
+        "recommended": true,
+        "noForEach": "off",
+        "noBannedTypes": "off",
+        "useLiteralKeys": "off",
+        "noExcessiveCognitiveComplexity": {
+          "level": "warn",
+          "options": {
+            "maxAllowedComplexity": 35
+          }
+        }
+      }
+    },
+    "ignore": [
+      "next.config.mjs",
+      "tailwind.config.ts",
+      "build/*",
+      "dist/*",
+      "dist-server/*",
+      "public/*",
+      "**/out/*",
+      "**/node_modules/*",
+      "**/403.*",
+      "**/404.*",
+      "**/500.*",
+      "scripts/*",
+      "src/schemas/*",
+      "shared/schemas/*",
+      "src/styles/base.style.ts",
+      "src/styles/preset.style.ts",
+      "src/styles/hereoui.style.ts",
+      "src/assets/iconify-bundle.json"
+    ]
+  },
+  "javascript": {
+    "formatter": {
+      "jsxQuoteStyle": "double",
+      "quoteProperties": "asNeeded",
+      "trailingCommas": "es5",
+      "semicolons": "asNeeded",
+      "arrowParentheses": "asNeeded",
+      "bracketSpacing": true,
+      "bracketSameLine": false,
+      "quoteStyle": "single",
+      "attributePosition": "auto"
+    }
+  }
+}
