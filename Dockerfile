@@ -11,6 +11,10 @@ RUN bun install --frozen-lockfile
 # Copiamos el resto del código
 COPY . .
 
+# Recibir variable en build
+ARG VITE_BACKEND_URL
+ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
+
 # Construimos la app para producción
 RUN bun run build
 

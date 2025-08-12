@@ -83,7 +83,7 @@ jobs:
                 - protocol: TCP
                   port: 80
                   targetPort: 80
-                  nodePort: 3030
+                  nodePort: 32030
             EOF
 
             kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml apply -f /root/frontend-service.yaml
