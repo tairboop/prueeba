@@ -1,0 +1,89 @@
+name: CD - Deploy Frontend to Kubernetes
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download version artifact
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          workflow: ci.yml
+          name: version
+          path: .
+
+      - name: Read version from file txt
+        run: |
+          VERSION=$(cat version.txt)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Deploy to Kubernetes inside VPS via SSH
+        uses: appleboy/ssh-action@v0.1.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          envs: VERSION
+          script: |
+            set -e
+
+            # Frontend Deployment
+            cat <<EOF > /root/frontend-deployment.yaml
+            apiVersion: apps/v1
+            kind: Deployment
+            metadata:
+              name: streamcast-frontend-deployment
+              labels:
+                app: streamcast-frontend
+            spec:
+              replicas: 1
+              selector:
+                matchLabels:
+                  app: streamcast-frontend
+              template:
+                metadata:
+                  labels:
+                    app: streamcast-frontend
+                spec:
+                  containers:
+                    - name: streamcast-frontend
+                      image: ${{ secrets.DOCKERHUB_USERNAME }}/frontstm:${VERSION}
+                      imagePullPolicy: Always
+                      ports:
+                        - containerPort: 80
+            EOF
+
+            kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml apply -f /root/frontend-deployment.yaml
+            kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml rollout status deployment/streamcast-frontend-deployment --timeout=60s || {
+              echo "Rollback..."
+              kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml rollout undo deployment/streamcast-frontend-deployment
+              exit 1
+            }
+
+            # Frontend Service
+            cat <<EOF > /root/frontend-service.yaml
+            apiVersion: v1
+            kind: Service
+            metadata:
+              name: streamcast-frontend-service
+            spec:
+              type: NodePort
+              selector:
+                app: streamcast-frontend
+              ports:
+                - protocol: TCP
+                  port: 80
+                  targetPort: 80
+                  nodePort: 3030
+            EOF
+
+            kubectl --kubeconfig /etc/rancher/k3s/k3s.yaml apply -f /root/frontend-service.yaml

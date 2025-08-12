@@ -1,0 +1,17 @@
+# Dependencias
+node_modules
+bun.lockb
+.pnpm-store
+
+# Archivos temporales
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Carpetas de build locales
+dist
+build
+
+# Configuración local
+.env
+.env.local
